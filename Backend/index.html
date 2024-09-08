@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Chat</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #e9eff1;
+    }
+    
+    #chat-container {
+      width: 400px;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      height: 80vh;
+    }
+    
+    #messages {
+      list-style-type: none;
+      padding: 0;
+      flex: 1;
+      overflow-y: auto;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f4f6f8;
+    }
+    
+    #messages li {
+      margin: 10px;
+      padding: 10px;
+      border-radius: 15px;
+      max-width: 80%;
+      word-wrap: break-word;
+    }
+    
+    .message-sent {
+      background-color: #007bff;
+      color: white;
+      align-self: flex-end;
+      text-align: right;
+      margin-left: auto;
+      border-radius: 15px 15px 0 15px;
+    }
+    
+    .message-received {
+      background-color: #e9eff1;
+      color: #333;
+      align-self: flex-start;
+      text-align: left;
+      margin-right: auto;
+      border-radius: 15px 15px 15px 0;
+    }
+    
+    input[type="text"] {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    
+    button:hover {
+      background-color: #0056b3;
+    }
+    
+    #username, #receiver {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+    <div id="chat-container">
+      <div>
+        <input id="username" placeholder="Enter your user ID" />
+        <button onclick="joinChat()">Join Chat</button>
+      </div>
+      
+      <div>
+        <input id="receiver" placeholder="Enter receiver user ID" />
+        <input id="message" placeholder="Enter your message" />
+        <button onclick="sendMessage()">Send Message</button>
+      </div>
+
+      <div id="chat">
+        <h2>Chat Messages</h2>
+        <ul id="messages"></ul>
+      </div>
+    </div>
+
+    <script src="http://localhost:7000/socket.io/socket.io.js"></script>
+
+    <script>
+      let socket;
+
+      window.onload = () => {
+        socket = io('http://localhost:7000');
+        
+        socket.on('connect', () => {
+          console.log('Connected to server');
+          loadMessages(); // Initial load of messages
+        });
+
+        socket.on('disconnect', () => {
+          console.log('Disconnected from server');
+        });
+
+        socket.on('connect_error', (error) => {
+          console.error('Connection error:', error);
+        });
+
+        socket.on('message', (message) => {
+          console.log('Received message:', message);
+          
+          if (message && message.sender && message.receiver && message.text) {
+            displayMessage(message);
+          } else {
+            console.error('Received message is malformed:', message);
+          }
+        });
+
+        socket.onAny((event, ...args) => {
+          console.log(`Received event: ${event}`, args);
+        });
+
+        // Periodically load messages
+        setInterval(loadMessages, 5000);
+      };
+
+      function joinChat() {
+        const userId = document.getElementById('username').value.trim();
+        console.log('Joining chat with user ID:', userId);
+        if (socket && userId) {
+          socket.emit('join', userId);
+        } else {
+          console.error('Socket is not initialized or user ID is empty');
+        }
+      }
+
+      function sendMessage() {
+        const senderId = document.getElementById('username').value.trim();
+        const receiverId = document.getElementById('receiver').value.trim();
+        const text = document.getElementById('message').value.trim();
+        
+        console.log('Sending message:', { senderId, receiverId, text });
+        
+        if (socket && text !== '') {
+          socket.emit('message', { senderId, receiverId, text });
+          console.log('Message emitted:', { senderId, receiverId, text });
+
+          document.getElementById('message').value = ''; // Clear the input after sending
+        } else {
+          console.error('Socket is not initialized or message is empty');
+        }
+      }
+
+      async function loadMessages() {
+        const user1Id = document.getElementById('username').value.trim();
+        const user2Id = document.getElementById('receiver').value.trim();
+        
+        if (user1Id && user2Id) {
+          try {
+            const response = await fetch(`http://localhost:7000/chat/messages-between/${user1Id}/${user2Id}`);
+            const messages = await response.json();
+
+            console.log('Loaded messages:', messages);
+
+            const messageList = document.getElementById('messages');
+            messageList.innerHTML = ''; // Clear existing messages
+            
+            messages.forEach(message => {
+              displayMessage(message);
+            });
+
+            messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to latest message
+
+          } catch (error) {
+            console.error('Error loading messages:', error);
+          }
+        } else {
+          console.error('Both user IDs are required to load messages');
+        }
+      }
+
+      function displayMessage(message) {
+        const messageList = document.getElementById('messages');
+        const newMessage = document.createElement('li');
+        const userId = parseInt(document.getElementById('username').value.trim(), 10);
+
+        // Checking if the current user is the sender
+        if (message.sender.Id === userId) {
+            newMessage.textContent = `You: ${message.text}`;
+            newMessage.classList.add('message-sent');
+        } else {
+            newMessage.textContent = `${message.sender.Id}: ${message.text}`;
+            newMessage.classList.add('message-received');
+        }
+
+        messageList.appendChild(newMessage);
+        messageList.scrollTop = messageList.scrollHeight; // Auto-scroll to latest message
+      }
+    </script>
+  </body>
+</html>

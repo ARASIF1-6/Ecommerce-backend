@@ -1,0 +1,64 @@
+http://localhost:7000/auth/login                                                Method: POST
+http://localhost:7000/auth/signup                                               Method: POST
+http://localhost:7000/auth/RefreshToken                                         Method: POST
+http://localhost:7000/auth/logout                                               Method: POST
+http://localhost:7000/Banner                                                    Method: GET
+http://localhost:7000/Banner/add                                                Method: POST
+http://localhost:7000/Banner/all                                                Method: GET
+http://localhost:7000/Cart                                                      Method: GET
+http://localhost:7000/Cart/addToCart                                            Method: POST
+http://localhost:7000/Category                                                  Method: GET
+http://localhost:7000/Category/search/:id                                       Method: GET
+http://localhost:7000/Category/search                                           Method: GET
+http://localhost:7000/Category/addCategory                                      Method: POST
+http://localhost:7000/Collection                                                Method: GET
+http://localhost:7000/Collection/search/:id                                     Method: GET
+http://localhost:7000/Collection/search                                         Method: GET
+http://localhost:7000/Collection/addCollection                                  Method: POST
+http://localhost:7000/Order                                                     Method: GET
+http://localhost:7000/Order/addOrder                                            Method: POST
+http://localhost:7000/Product                                                   Method: GET
+http://localhost:7000/Product/search/:id                                        Method: GET
+http://localhost:7000/Product/search                                            Method: GET
+http://localhost:7000/Product/searchByCategory/:CategoryId                      Method: GET
+http://localhost:7000/Product/add                                               Method: POST
+http://localhost:7000/User                                                      Method: GET
+http://localhost:7000/User/search/:id                                           Method: GET
+http://localhost:7000/ReviewRating                                              Method: GET
+http://localhost:7000/ReviewRating/addReviewRating                              Method: Post
+http://localhost:7000/ReviewRating/search/:userId/:productId                    Method: GET
+http://localhost:7000/ReviewRating/search/:productId                            Method: GET
+http://localhost:7000/ReviewRating/update/:userId/:productId                    Method: PUT
+http://localhost:7000/ReviewRating/averageRating/:productId                     Method: GET
+http://localhost:7000/ReviewRating/remove/:userId/:productId                    Method: DELETE
+http://localhost:7000/WishList/add                                              Method: Post
+http://localhost:7000/WishList/show_wishlist/:userId                            Method: GET
+http://localhost:7000/auth/SignupVerifyOTP                                      Method: Post
+http://localhost:7000/auth/GoogleAuth                                           Method: Post
+http://localhost:7000/chat/messages-between/:user1/:user2                       Method: Get
+http://localhost:7000/Product//delete/:id                                       Method: Delete
+http://localhost:7000/Product/edit/:id                                          Method: Put
+http://localhost:7000/Graph/monthly                                             Method: Get
+http://localhost:7000/Graph/date-range                                          Method: Get
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
+http://localhost:7000
